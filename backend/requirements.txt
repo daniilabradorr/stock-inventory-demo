@@ -1,0 +1,9 @@
+Django>=5.2.3
+djangorestframework
+djangorestframework-simplejwt
+psycopg[binary]
+django-cors-headers
+python-decouple
+# Añadimos el servidor de producción
+gunicorn
+uvicorn
