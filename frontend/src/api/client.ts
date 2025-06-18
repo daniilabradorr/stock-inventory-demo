@@ -6,9 +6,29 @@ export const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
 });
 
-// Antes de cada petición añado el JWT si está guardado
+// ────────────────────────────────────────────────────────────────
+// Interceptor de *petición* → añade el JWT a cada request
+// ────────────────────────────────────────────────────────────────
 client.interceptors.request.use((cfg) => {
   const t = localStorage.getItem("token");   // busco token en localStorage
-  if (t) cfg.headers.Authorization = `Bearer ${t}`;   // lo inyecto en headers
+  if (t) {
+    cfg.headers = cfg.headers ?? {};
+    cfg.headers.Authorization = `Bearer ${t}`;   // lo inyecto en headers
+  }
   return cfg;
 });
+
+// ────────────────────────────────────────────────────────────────
+// Interceptor de *respuesta* → si la API devuelve 401 (token caducado
+// o inválido), borro el token y redirijo al /login.
+// ────────────────────────────────────────────────────────────────
+client.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");        // limpio token
+      window.location.href = "/login";         // fuerzo re-login
+    }
+    return Promise.reject(err);
+  }
+);
