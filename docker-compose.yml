@@ -1,15 +1,44 @@
-﻿services:
+﻿version: "3.9"
+
+services:
+  # ────────── 1) Base de datos Postgres ──────────
   db:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_DB: stockdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB:       ${DB_NAME:-stockdb}
+      POSTGRES_USER:     ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  # ────────── 2) Backend Django + DRF ──────────
+  backend:
+    build:
+      context: ./backend        
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env         
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  # ────────── 3) Frontend React (build + nginx) ──────────
+  frontend:
+    build:
+      context: ./frontend       
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://localhost:8000/api   
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"              
 
 volumes:
   db_data:

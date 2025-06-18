@@ -1,4 +1,3 @@
-// Página de login actualizada con footer con logo + enlaces sociales
 import { useContext, useState } from "react";
 import { AuthCtx } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -117,14 +116,14 @@ export default function LoginPage() {
           }}
         >
           <Link
-            href="https://www.linkedin.com/in/tu-usuario/"
+            href="https://www.linkedin.com/in/daniel-labrador-benito-6b794727b/"
             target="_blank"
             rel="noopener"
           >
             <LinkedInIcon />
           </Link>
           <Link
-            href="https://github.com/tu-usuario/stock-inventario-demo"
+            href="https://github.com/daniilabradorr/stock-inventory-demo"
             target="_blank"
             rel="noopener"
           >
